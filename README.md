@@ -19,6 +19,62 @@ A production-ready Banking as a Service platform built with Spring Boot microser
 
 ## Architecture
 
+```mermaid
+flowchart TB
+    subgraph Client["🖥️ Client"]
+        UI["BaaS Bank UI<br/>Angular Frontend"]
+    end
+
+    subgraph Gateway["🚪 API Gateway"]
+        GW["Spring Cloud Gateway<br/>:8080"]
+    end
+
+    subgraph Discovery["📡 Service Discovery"]
+        Eureka["Eureka Server<br/>:8761"]
+    end
+
+    subgraph Services["🏦 Microservices"]
+        UserSvc["User Service<br/>Registration & Auth"]
+        AccountSvc["Account Service<br/>Balance & Operations"]
+        PaymentSvc["Payment Service<br/>Processing"]
+        TransactionSvc["Transaction Service<br/>Recording"]
+        NotificationSvc["Notification Service<br/>Email Alerts"]
+        AuditSvc["Audit Service<br/>Event Logging"]
+    end
+
+    subgraph Messaging["📨 Event Bus"]
+        Kafka["Apache Kafka<br/>Spring Cloud Stream"]
+    end
+
+    subgraph Auth["🔐 Authentication"]
+        Keycloak["Keycloak<br/>OAuth 2.0 / JWT"]
+    end
+
+    subgraph Data["💾 Database"]
+        MySQL["MySQL 8.0<br/>Shared Database"]
+    end
+
+    UI -->|"REST API"| GW
+    GW -->|"Route"| Services
+    GW -->|"Auth"| Keycloak
+    Services -->|"Register"| Eureka
+    Services <-->|"Events"| Kafka
+    Services -->|"Persist"| MySQL
+
+    UserSvc -->|"UserRegisteredEvent"| Kafka
+    Kafka -->|"Create Account"| AccountSvc
+    AccountSvc -->|"AccountOpenedEvent"| Kafka
+    Kafka -->|"Send Welcome"| NotificationSvc
+    Kafka -->|"Log Event"| AuditSvc
+
+    style Client fill:#e3f2fd,stroke:#1976d2
+    style Gateway fill:#fff3e0,stroke:#f57c00
+    style Services fill:#e8f5e9,stroke:#388e3c
+    style Messaging fill:#fce4ec,stroke:#c2185b
+    style Auth fill:#f3e5f5,stroke:#7b1fa2
+    style Data fill:#e0f2f1,stroke:#00897b
+```
+
 ### Technology Stack
 
 - **Framework**: Spring Boot with Java 21
