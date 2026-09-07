@@ -7,7 +7,7 @@ import com.rajeswaran.common.util.SecurityUtil;
 import com.rajeswaran.user.entity.User;
 import com.rajeswaran.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cloud.stream.function.StreamBridge;
+import com.rajeswaran.common.messaging.EventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,7 +19,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final StreamBridge streamBridge;
+    private final EventPublisher streamBridge;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -32,6 +32,8 @@ public class UserService {
 
 
     public User createUserFromJwt(String username, String email, String fullName) {
+        var existing = userRepository.findByUsername(username);
+        if (existing.isPresent()) return existing.get();
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
@@ -54,8 +56,8 @@ public class UserService {
                 .roles(roles) // Include roles in the event
                 .build();
 
-        streamBridge.send("userRegisteredEvent-out-0", event);
-        streamBridge.send("auditEvent-out-0", event);
+        streamBridge.publish("userRegisteredEvent-out-0", event);
+        streamBridge.publish("auditEvent-out-0", event);
 
         return savedUser;
     }

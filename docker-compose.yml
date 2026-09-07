@@ -1,8 +1,7 @@
 # Banking as Service
-version: '3.8'
 services:
   mysql:
-    image: mysql:8.0
+    image: mysql:8.4
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
@@ -18,7 +17,7 @@ services:
       retries: 5
 
   broker:
-    image: apache/kafka:latest
+    image: apache/kafka:4.1.0
     hostname: broker
     container_name: broker
     ports:
@@ -48,7 +47,7 @@ services:
       - ./config/keycloak/baas-realm.json:/opt/keycloak/data/import/baas-realm.json
 
   service-discovery:
-    image: rajeswaran/baas-service-discovery:1.0-SNAPSHOT
+    image: rajeswaran/choreographed-baas-service-discovery:1.0-SNAPSHOT
     container_name: service-discovery
     ports:
       - "8761:8761"
@@ -59,7 +58,7 @@ services:
       retries: 5
 
   user-service:
-    image: rajeswaran/baas-user-service:1.0-SNAPSHOT
+    image: rajeswaran/choreographed-baas-user-service:1.0-SNAPSHOT
     container_name: user-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -81,7 +80,7 @@ services:
         condition: service_started
 
   account-service:
-    image: rajeswaran/baas-account-service:1.0-SNAPSHOT
+    image: rajeswaran/choreographed-baas-account-service:1.0-SNAPSHOT
     container_name: account-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -103,7 +102,7 @@ services:
         condition: service_started
 
   transaction-service:
-    image: rajeswaran/baas-transaction-service:1.0-SNAPSHOT
+    image: rajeswaran/choreographed-baas-transaction-service:1.0-SNAPSHOT
     container_name: transaction-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -125,7 +124,7 @@ services:
         condition: service_started
 
   payment-service:
-    image: rajeswaran/baas-payment-service:1.0-SNAPSHOT
+    image: rajeswaran/choreographed-baas-payment-service:1.0-SNAPSHOT
     container_name: payment-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -147,7 +146,7 @@ services:
         condition: service_started
 
   notification-service:
-    image: rajeswaran/baas-notification-service:1.0-SNAPSHOT
+    image: rajeswaran/choreographed-baas-notification-service:1.0-SNAPSHOT
     container_name: notification-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -167,7 +166,7 @@ services:
         condition: service_started
 
   audit-service:
-    image: rajeswaran/baas-audit-service:1.0-SNAPSHOT
+    image: rajeswaran/choreographed-baas-audit-service:1.0-SNAPSHOT
     container_name: audit-service
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -188,7 +187,7 @@ services:
 
 
   api-gateway:
-    image: rajeswaran/baas-api-gateway:1.0-SNAPSHOT
+    image: rajeswaran/choreographed-baas-api-gateway:1.0-SNAPSHOT
     container_name: api-gateway
     ports:
       - "8080:8080"

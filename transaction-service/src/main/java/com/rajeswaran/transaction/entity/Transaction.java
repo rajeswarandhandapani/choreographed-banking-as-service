@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "transactions", uniqueConstraints = @UniqueConstraint(columnNames = {"reference", "type"}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

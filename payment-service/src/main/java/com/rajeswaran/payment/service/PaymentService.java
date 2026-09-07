@@ -6,7 +6,7 @@ import com.rajeswaran.common.util.SecurityUtil;
 import com.rajeswaran.payment.entity.Payment;
 import com.rajeswaran.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cloud.stream.function.StreamBridge;
+import com.rajeswaran.common.messaging.EventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PaymentService {
     private final PaymentRepository paymentRepository;
-    private final StreamBridge streamBridge;
+    private final EventPublisher streamBridge;
 
     public List<Payment> getAllPayments() {
         return paymentRepository.findAll();
@@ -31,9 +31,15 @@ public class PaymentService {
         return paymentRepository.findById(id);
     }
 
-    public Payment createPayment(Payment payment) {
-        // Use SecurityContextHolder here, not in common-lib
-        String username = SecurityUtil.getCurrentUsername();
+    public Payment createPayment(com.rajeswaran.payment.dto.CreatePaymentRequest request, String username) {
+        if (!Double.isFinite(request.amount()) || request.amount() <= 0 || request.sourceAccountNumber().equals(request.destinationAccountNumber())) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Invalid transfer details");
+        }
+        Payment payment = new Payment();
+        payment.setSourceAccountNumber(request.sourceAccountNumber());
+        payment.setDestinationAccountNumber(request.destinationAccountNumber());
+        payment.setAmount(request.amount());
+        payment.setDescription(request.description());
 
         // Set the createdBy field to track which user created this payment
         payment.setCreatedBy(username);
@@ -51,6 +57,7 @@ public class PaymentService {
                 .sourceAccountNumber(created.getSourceAccountNumber())
                 .destinationAccountNumber(created.getDestinationAccountNumber())
                 .amount(created.getAmount())
+                .description(created.getDescription())
                 .username(username)
                 .timestamp(SagaEventBuilderUtil.now())
                 .details("Payment initiated for paymentId: " + created.getId())
@@ -58,8 +65,8 @@ public class PaymentService {
                 .serviceName(com.rajeswaran.common.AppConstants.ServiceName.PAYMENT_SERVICE)
                 .eventType(com.rajeswaran.common.AppConstants.SagaEventType.PAYMENT_INITIATED)
                 .build();
-        streamBridge.send("paymentInitiatedEvent-out-0", event);
-        streamBridge.send("auditEvent-out-0", event);
+        streamBridge.publish("paymentInitiatedEvent-out-0", event);
+        streamBridge.publish("auditEvent-out-0", event);
         return created;
     }
 

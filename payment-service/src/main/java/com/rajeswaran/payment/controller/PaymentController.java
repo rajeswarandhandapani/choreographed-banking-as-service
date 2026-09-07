@@ -54,10 +54,8 @@ public class PaymentController {
 
     @PreAuthorize("hasRole(T(com.rajeswaran.common.AppConstants).ROLE_ACCOUNT_HOLDER)")
     @PostMapping
-    public Payment createPayment(@RequestBody Payment payment) {
-        log.info("Received request: createPayment, payload={}", payment);
-        Payment created = paymentService.createPayment(payment);
-        log.info("Completed request: createPayment, createdId={}", created.getId());
-        return created;
+    public ResponseEntity<Payment> createPayment(@jakarta.validation.Valid @RequestBody com.rajeswaran.payment.dto.CreatePaymentRequest request) {
+        Payment created = paymentService.createPayment(request, SecurityUtil.getCurrentUsername());
+        return ResponseEntity.accepted().body(created);
     }
 }

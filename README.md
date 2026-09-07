@@ -1,8 +1,10 @@
+> Modernized to Spring Boot 4.1.1 / Spring Cloud 2025.1.3. See [MODERNIZATION.md](MODERNIZATION.md) for current startup, UI integration, dependency changes and limitations.
+
 # Banking as a Service (BaaS) Platform
 
 ## Overview
 
-A production-ready Banking as a Service platform built with Spring Boot microservices architecture, featuring modern saga choreography patterns for distributed transaction management. The platform provides a robust foundation for core banking operations, with a focus on event-driven design, security, and extensibility.
+A demonstration Banking as a Service platform built with Spring Boot microservices architecture, featuring modern saga choreography patterns for distributed transaction management. The platform provides a robust foundation for core banking operations, with a focus on event-driven design, security, and extensibility.
 
 ---
 

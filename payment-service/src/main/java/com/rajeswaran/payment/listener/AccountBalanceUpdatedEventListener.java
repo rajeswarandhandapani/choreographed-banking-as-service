@@ -8,7 +8,7 @@ import com.rajeswaran.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.stream.function.StreamBridge;
+import com.rajeswaran.common.messaging.EventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +22,7 @@ public class AccountBalanceUpdatedEventListener {
     private static final Logger log = LoggerFactory.getLogger(AccountBalanceUpdatedEventListener.class);
 
     private final PaymentRepository paymentRepository;
-    private final StreamBridge streamBridge;
+    private final EventPublisher streamBridge;
 
     @Bean
     public Consumer<AccountBalanceUpdatedEvent> accountBalanceUpdatedEvent() {
@@ -51,8 +51,8 @@ public class AccountBalanceUpdatedEventListener {
                         .serviceName(com.rajeswaran.common.AppConstants.ServiceName.PAYMENT_SERVICE)
                         .eventType(com.rajeswaran.common.AppConstants.SagaEventType.PAYMENT_PROCESSED)
                         .build();
-                streamBridge.send("paymentProcessedEvent-out-0", processedEvent);
-                streamBridge.send("auditEvent-out-0", processedEvent);
+                streamBridge.publish("paymentProcessedEvent-out-0", processedEvent);
+                streamBridge.publish("auditEvent-out-0", processedEvent);
                 log.info("Published PaymentProcessedEvent for paymentId={}", event.getPaymentId());
             } else {
                 log.error("Payment not found for paymentId={}", event.getPaymentId());

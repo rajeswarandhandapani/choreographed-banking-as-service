@@ -21,6 +21,7 @@ public class Payment {
     private double amount;
     private String status;
     private String reference;
+    private String description;
     private LocalDateTime timestamp;
     private String createdBy; // Added field to track which user created this payment
 }

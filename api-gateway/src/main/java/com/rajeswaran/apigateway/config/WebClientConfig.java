@@ -10,7 +10,8 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 @Configuration
 public class WebClientConfig {
 
-    private String baseUrl = "http://localhost:8080";
+    @org.springframework.beans.factory.annotation.Value("${banking.gateway-base-url:http://localhost:${server.port:8080}}")
+    private String baseUrl;
 
     @Bean
     AdminDashboardClient adminDashboardClient() {

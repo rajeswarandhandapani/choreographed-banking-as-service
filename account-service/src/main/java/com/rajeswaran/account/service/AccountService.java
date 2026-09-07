@@ -30,51 +30,11 @@ public class AccountService {
             account.setCreatedTimestamp(LocalDateTime.now());
         }
         
-        // mimic exception for testing
-         /*if (!account.getAccountNumber().equals("1234567890")) {
-             throw new RuntimeException("Simulated exception for testing");
-         }*/
         return accountRepository.save(account);
     }
 
     public void deleteAccount(String id) {
         accountRepository.deleteById(id);
-    }
-
-    // Validate if account exists and has sufficient balance
-    public boolean validateSourceAccount(String accountNumber, double amount) {
-        Optional<Account> accountOpt = getAccountByAccountNumber(accountNumber);
-        if (accountOpt.isPresent()) {
-            Account account = accountOpt.get();
-            return account.getBalance() >= amount;
-        }
-        return false;
-    }
-
-    // Deduct amount from account balance
-    public boolean deductFromAccount(String accountNumber, double amount) {
-        Optional<Account> accountOpt = getAccountByAccountNumber(accountNumber);
-        if (accountOpt.isPresent()) {
-            Account account = accountOpt.get();
-            if (account.getBalance() >= amount) {
-                account.setBalance(account.getBalance() - amount);
-                accountRepository.save(account);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // Add amount to account balance
-    public boolean addToAccount(String accountNumber, double amount) {
-        Optional<Account> accountOpt = getAccountByAccountNumber(accountNumber);
-        if (accountOpt.isPresent()) {
-            Account account = accountOpt.get();
-            account.setBalance(account.getBalance() + amount);
-            accountRepository.save(account);
-            return true;
-        }
-        return false;
     }
 
     // Get accounts by user ID

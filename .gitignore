@@ -47,3 +47,5 @@ spring.log
 # Ignore local configuration
 application-local.properties
 application-local.yml
+
+.local/

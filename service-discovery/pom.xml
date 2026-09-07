@@ -13,15 +13,13 @@
   <name>Service Discovery</name>
   <description>Service discovery for microservices</description>
 
-  <properties>
-    <java.version>21</java.version>
-  </properties>
+
 
   <dependencies>
     <!-- Spring Boot Starter Web -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
     </dependency>
     <!-- Eureka Server -->
     <dependency>

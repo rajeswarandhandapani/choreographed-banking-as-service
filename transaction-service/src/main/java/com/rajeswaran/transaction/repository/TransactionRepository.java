@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    // Custom query methods if needed
+    List<Transaction> findByReference(String reference);
     List<Transaction> findByUsername(String username);
 }

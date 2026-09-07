@@ -1,0 +1,107 @@
+{
+  "realm": "baas",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "accessTokenLifespan": 3600,
+  "roles": {
+    "realm": [
+      {
+        "name": "BAAS_ADMIN",
+        "description": "Banking as a Service Admin Role"
+      },
+      {
+        "name": "ACCOUNT_HOLDER",
+        "description": "Regular Account Holder Role"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "baas-admin",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "User",
+      "email": "admin@baas.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "BAAS_ADMIN"
+      ]
+    },
+    {
+      "username": "user1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Regular",
+      "lastName": "User1",
+      "email": "user1@baas.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "ACCOUNT_HOLDER"
+      ]
+    },
+    {
+      "username": "user2",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Regular",
+      "lastName": "User2",
+      "email": "user2@baas.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "user123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "ACCOUNT_HOLDER"
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "banking-app",
+      "enabled": true,
+      "publicClient": true,
+      "redirectUris": [
+        "http://localhost:4201/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4201"
+      ],
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:4201/*"
+      }
+    },
+    {
+      "clientId": "banking-service",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "banking-service-secret",
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ]
+    }
+  ]
+}

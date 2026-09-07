@@ -9,23 +9,23 @@ import com.rajeswaran.common.events.UserRegisteredEvent;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.stream.function.StreamBridge;
+import com.rajeswaran.common.messaging.EventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.atomic.AtomicInteger;
+
 import java.util.function.Consumer;
 
 @Component
 @RequiredArgsConstructor
 public class UserRegisteredEventListener {
     private final AccountService accountService;
-    private final StreamBridge streamBridge;
+    private final EventPublisher streamBridge;
 
     private static final Logger log = LoggerFactory.getLogger(UserRegisteredEventListener.class);
 
-    private static final AtomicInteger accountNumberSequence = new AtomicInteger(10001);
+
 
     @Bean
     public Consumer<UserRegisteredEvent> userRegisteredEvent() {
@@ -67,8 +67,8 @@ public class UserRegisteredEventListener {
                         .status(account.getStatus())
                         .build();
 
-                streamBridge.send("auditEvent-out-0", accountOpenedEvent);
-                streamBridge.send("notificationEvent-out-0", accountOpenedEvent);
+                streamBridge.publish("auditEvent-out-0", accountOpenedEvent);
+                streamBridge.publish("notificationEvent-out-0", accountOpenedEvent);
             } catch (Exception ex) {
                 log.error("Account creation failed for userId={}, username={}, reason={}", event.getUserId(), event.getUsername(), ex.getMessage());
                 AccountOpenFailedEvent failedEvent = AccountOpenFailedEvent.builder()
@@ -82,14 +82,14 @@ public class UserRegisteredEventListener {
                         .serviceName(AppConstants.ServiceName.ACCOUNT_SERVICE)
                         .eventType(AppConstants.SagaEventType.ACCOUNT_OPEN_FAILED)
                         .build();
-                streamBridge.send("accountOpenFailedEvent-out-0", failedEvent);
-                streamBridge.send("auditEvent-out-0", failedEvent);
+                streamBridge.publish("accountOpenFailedEvent-out-0", failedEvent);
+                streamBridge.publish("auditEvent-out-0", failedEvent);
             }
         };
     }
 
     private String generateAccountNumber() {
-        String accountNumber = String.valueOf(accountNumberSequence.getAndIncrement());
+        String accountNumber = new java.math.BigInteger(java.util.UUID.randomUUID().toString().replace("-", ""), 16).toString();
         log.info("Generated account number: {}", accountNumber);
         return accountNumber;
     }
